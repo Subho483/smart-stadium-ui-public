@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart Venue Experience - V2</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="/socket.io/socket.io.js"></script>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div id="app">
+        <!-- Header -->
+        <header class="top-bar glass">
+            <div class="user-info">
+                <img src="https://i.pravatar.cc/150?u=a042581f4e29026704d" alt="Profile" class="avatar">
+                <div class="greeting">
+                    <span class="welcome-text">Welcome back,</span>
+                    <h2 class="user-name">Alex Johnson</h2>
+                </div>
+            </div>
+            <button class="icon-btn" aria-label="Notifications">
+                <i data-lucide="bell"></i>
+                <span class="badge">2</span>
+            </button>
+        </header>
+
+        <!-- System Status Banner -->
+        <div id="system-status-banner" class="status-banner online">
+            <i data-lucide="wifi" id="status-icon"></i>
+            <span id="sync-timestamp">Last updated: Just now</span>
+        </div>
+
+        <!-- Main Content Area -->
+        <main id="main-content">
+            <!-- Dashboard Section -->
+            <section id="view-dashboard" class="view active">
+                <div class="live-event-banner">
+                    <div class="live-badge pulse">LIVE</div>
+                    <h3>Championship Finals</h3>
+                    <p>Quarter 3 • 12:45 Remaining</p>
+                </div>
+                
+                <!-- Smart Nudge Banner -->
+                <div id="smart-nudge-container" class="smart-nudge">
+                    <div class="nudge-icon"><i data-lucide="compass"></i></div>
+                    <div class="nudge-content">
+                        <h4>Smart Suggestion</h4>
+                        <p id="nudge-text">Calculating optimal paths based on crowd density...</p>
+                    </div>
+                </div>
+
+                <div class="quick-actions">
+                    <div class="action-card" onclick="app.triggerSmartRoute('restroom')">
+                        <i data-lucide="map" class="action-icon text-blue"></i>
+                        <span>Find Restroom</span>
+                    </div>
+                    <div class="action-card" onclick="app.triggerSmartRoute('food')">
+                        <i data-lucide="coffee" class="action-icon text-magenta"></i>
+                        <span>Order Food</span>
+                    </div>
+                    <div class="action-card">
+                        <i data-lucide="users" class="action-icon text-green"></i>
+                        <span>Find Friends</span>
+                    </div>
+                </div>
+                
+                <h3 class="section-title">Your Orders</h3>
+                <div class="order-card">
+                    <div class="order-header">
+                        <span class="order-id">#8492</span>
+                        <span class="order-status preparing">Preparing</span>
+                    </div>
+                    <div class="order-details">
+                        <i data-lucide="shopping-bag"></i>
+                        <span>2x Classic Burger, 1x Large Soda</span>
+                    </div>
+                    <p class="delivery-info">In-seat delivery to <strong>Sec 112, Row F, Seat 4</strong></p>
+                </div>
+            </section>
+
+            <!-- Map Section -->
+            <section id="view-map" class="view">
+                <div class="map-controls glass">
+                    <button class="filter-btn active" data-filter="all">All</button>
+                    <button class="filter-btn" data-filter="restroom"><i data-lucide="users"></i> Restrooms</button>
+                    <button class="filter-btn" data-filter="food"><i data-lucide="pizza"></i> Food</button>
+                    <button class="filter-btn" data-filter="exit"><i data-lucide="door-open"></i> Exits</button>
+                </div>
+                
+                <div class="map-container">
+                    <!-- User Location Representation Data -->
+                    <div class="stadium-graphic">
+                        <div class="field">Field</div>
+                        <div class="stands top">North Stands</div>
+                        <div class="stands bottom">South Stands</div>
+                        <div class="stands left">West</div>
+                        <div class="stands right">East</div>
+                    </div>
+                    
+                    <!-- SVG Routing Layer -->
+                    <svg class="routing-layer" viewBox="0 0 100 100" preserveAspectRatio="none">
+                        <!-- Heatmap Overlay placeholder -->
+                        <g id="heatmap-layer"></g>
+
+                        <!-- Dijkstra Route Path -->
+                        <polyline id="route-path" fill="none" class="hidden-route active-route" stroke-linejoin="round" points="50,90 50,90" />
+                        
+                        <!-- Concourse Map Path rendering (visible for engineering depth) -->
+                        <g id="concourse-paths"></g>
+                        
+                        <circle id="user-location" cx="50" cy="90" r="2.5" class="user-pulse" />
+                    </svg>
+
+                    <!-- Nodes -->
+                    <div class="map-overlay">
+                        <!-- Injected via JS -->
+                    </div>
+                </div>
+
+                <div id="amenity-details-panel" class="bottom-sheet">
+                    <div class="sheet-handle"></div>
+                    <div style="display:flex; justify-content:space-between; align-items:flex-start;">
+                        <div>
+                            <h3 id="amenity-title">Loading...</h3>
+                            <p id="amenity-type" class="text-muted">Loading...</p>
+                        </div>
+                        <div id="amenity-score-badge" class="score-badge hidden">Score: 0</div>
+                    </div>
+                    
+                    <!-- Efficiency Metric -->
+                    <div id="amenity-efficiency-container" class="hidden" style="margin: 8px 0; padding: 10px; background: rgba(16, 185, 129, 0.1); border: 1px solid rgba(16, 185, 129, 0.3); border-radius: 6px; color: #10b981;">
+                        <div style="display: flex; align-items: center; justify-content: space-between; font-weight: 800; font-size: 0.95rem; margin-bottom: 4px;">
+                            <span id="amenity-efficiency-text">Saved 0% time</span>
+                            <span id="amenity-efficiency-value" style="font-size: 1.1em;">+0</span>
+                        </div>
+                        <div style="font-size: 0.8rem; font-weight: 500; opacity: 0.9;">
+                            <i data-lucide="zap" style="width: 12px; height: 12px;"></i> <span id="amenity-avoided-nodes">Avoided 0 congestion zones</span>
+                        </div>
+                    </div>
+
+                    <div class="wait-time-display">
+                        <div style="display:flex; flex-direction:column;">
+                            <span class="wait-label">Current Wait:</span>
+                            <span id="amenity-wait-time" class="wait-value badge-green">--</span>
+                        </div>
+                        <div style="display:flex; flex-direction:column; text-align:right;">
+                            <span class="wait-label text-muted">Predicted in 5m:</span>
+                            <span id="amenity-forecast" class="wait-value text-muted">--</span>
+                        </div>
+                    </div>
+                    <button class="btn btn-primary w-full mt-4" id="btn-smart-route">
+                        <i data-lucide="navigation"></i> Start Route
+                    </button>
+                </div>
+            </section>
+
+            <!-- Order Section -->
+            <section id="view-order" class="view">
+                <div class="menu-tabs">
+                    <button class="tab active">Food</button>
+                    <button class="tab">Drinks</button>
+                    <button class="tab">Merch</button>
+                </div>
+                
+                <div class="menu-items">
+                    <!-- Injected via JS -->
+                </div>
+
+                <div class="cart-floating-bar glass" onclick="app.toggleCart()">
+                    <div class="cart-info">
+                        <i data-lucide="shopping-cart"></i>
+                        <span id="cart-count">0 items</span>
+                    </div>
+                    <span id="cart-total">$0.00</span>
+                </div>
+            </section>
+        </main>
+
+        <!-- Bottom Navigation -->
+        <nav class="bottom-nav glass" id="bottom-navigation">
+            <button class="nav-item active" data-target="dashboard">
+                <i data-lucide="home"></i>
+                <span>Home</span>
+            </button>
+            <button class="nav-item" data-target="map">
+                <i data-lucide="map"></i>
+                <span>Map</span>
+            </button>
+            <button class="nav-item" data-target="order">
+                <i data-lucide="shopping-bag"></i>
+                <span>Order</span>
+            </button>
+            <button class="nav-item" data-target="profile">
+                <i data-lucide="user"></i>
+                <span>Profile</span>
+            </button>
+        </nav>
+    </div>
+
+    <!-- Floating Dev Console -->
+    <div id="dev-console" class="dev-console collapsed glass">
+        <button id="dev-toggle" class="dev-toggle">
+            <i data-lucide="settings"></i>
+        </button>
+        <div class="dev-content">
+            <h4><span class="sim-badge">SIMULATION MODE</span> Console</h4>
+            
+            <div class="dev-group">
+                <label>Live Event Surges</label>
+                <button class="dev-btn blocky mt-2 btn-surge" data-event="goal">Trigger GOAL Spike ⚽</button>
+                <button class="dev-btn blocky mt-2 btn-surge" data-event="halftime">Trigger HALFTIME 🕒</button>
+                <button class="dev-btn blocky mt-2 btn-surge btn-danger" data-event="end_match">Match END (Evacuate) 🚨</button>
+            </div>
+            
+            <div class="dev-group border-top">
+                <label>Network Reliability</label>
+                <div class="toggle-group">
+                    <button class="dev-btn active" data-net="online">Online</button>
+                    <button class="dev-btn" data-net="offline">Offline / Cache</button>
+                </div>
+            </div>
+
+            <div class="dev-group border-top">
+                <label>Debug Data</label>
+                <label class="check-container">
+                    <input type="checkbox" id="sim-show-routes" checked> Show AI Route Path
+                </label>
+                <label class="check-container">
+                    <input type="checkbox" id="sim-show-scores"> Overlay Routing Scores
+                </label>
+            </div>
+
+            <div class="dev-group danger-zone">
+                <label>System Crisis Emulation</label>
+                <button class="dev-btn btn-danger blocky" id="sim-emergency-btn">Trigger Emergency</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Emergency Full Screen Takeover -->
+    <div id="emergency-overlay" class="emergency-overlay hidden">
+        <div class="emergency-content">
+            <i data-lucide="alert-triangle" class="emergency-icon pulse-fast"></i>
+            <h2>EVACUATION PROTOCOL</h2>
+            <p>Please remain calm and follow the active routing path.</p>
+            <div id="emergency-instruction" class="emergency-instruction">
+                Calculating safest exit route...
+            </div>
+            <button class="btn btn-secondary w-full mt-4" onclick="app.triggerSmartRoute('exit')">
+                <i data-lucide="navigation"></i> View Safe Route
+            </button>
+        </div>
+    </div>
+
+    <script src="/shared/graph.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>
