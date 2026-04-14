@@ -8,6 +8,8 @@ By utilizing dynamic quadratic Dijkstra pathfinding and a live Express/Node.js E
 
 ## 🎥 Live Demo
 
+[🌍 **Launch Live Application**](https://smart-stadium-ui-public.onrender.com)
+
 ![Demo](demo.gif)
 
 ## 💡 How It Works
