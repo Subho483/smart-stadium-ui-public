@@ -1,12 +1,11 @@
-# 🏟️ Smart Venue AI Routing Engine
+# Smart Stadium AI Routing Engine
 
-> "Inspired by crowd control disasters like stadium stampedes and agonizing 45-minute bathroom queues, this system demonstrates how software-only intelligence can fundamentally improve venue safety and the fan experience."
-
-An AI-powered full-stack crowd management system that optimizes attendee movement, actively reroutes around congestion surges, and manages emergency evacuations in large stadiums. 
-
-By utilizing dynamic quadratic Dijkstra pathfinding and a live Express/Node.js Event Surge Engine, this platform demonstrates how active architectural modeling can yield a **27% reduction in estimated travel time** during peak crowd load.
+🌍 Live Demo: https://smart-stadium-ui-public.onrender.com  
+💻 Tech Stack: Node.js, Express, JavaScript, Graph Algorithms  
+📍 Real-time crowd optimization for large venues
 
 ## 🌐 Deployment Status
+
 
 | Service | Status | Link |
 | :--- | :--- | :--- |
