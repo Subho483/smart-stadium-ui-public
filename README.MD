@@ -6,11 +6,19 @@ An AI-powered full-stack crowd management system that optimizes attendee movemen
 
 By utilizing dynamic quadratic Dijkstra pathfinding and a live Express/Node.js Event Surge Engine, this platform demonstrates how active architectural modeling can yield a **27% reduction in estimated travel time** during peak crowd load.
 
-## 🎥 Live Demo
+## 🌐 Deployment Status
 
-[🌍 **Launch Live Application**](https://smart-stadium-ui-public.onrender.com)
+| Service | Status | Link |
+| :--- | :--- | :--- |
+| **Production API** | ![Status](https://img.shields.io/website?url=https%3A%2F%2Fsmart-stadium-ui-public.onrender.com%2Fhealthz) | [View Dashboard](https://smart-stadium-ui-public.onrender.com) |
+| **System Health** | ![Uptime](https://img.shields.io/website?label=Healthz&url=https%3A%2F%2Fsmart-stadium-ui-public.onrender.com%2Fhealthz) | [/healthz](https://smart-stadium-ui-public.onrender.com/healthz) |
 
-![Demo](demo.gif)
+> [!TIP]
+> **For Recruiters:** This application demonstrates a full-stack real-time engine. To see the AI in action, open the **Dev Console (Gear Icon)** in the bottom right of the live map to trigger stadium surges (Goals, Halftime, etc.).
+
+## 🎥 Live Preview
+![Demo](https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExM3Z6Nnp6Nnp6Nnp6Nnp6Nnp6Nnp6Nnp6Nnp6Nnp6Nnp6Nnp6NyZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/3o7TKMGpxx8A3ZqW9q/giphy.gif)
+
 
 ## 💡 How It Works
 
