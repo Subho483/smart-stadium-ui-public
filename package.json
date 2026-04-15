@@ -2,10 +2,10 @@
   "name": "smart-stadium-engine",
   "version": "1.0.0",
   "description": "Top 1% AI Routing Backend for Event Venues",
-  "main": "dist/server.js",
+  "main": "dist/server/server.js",
   "scripts": {
     "build": "tsc",
-    "start": "node dist/server.js",
+    "start": "node dist/server/server.js",
     "dev": "ts-node server/server.ts",
     "test": "jest"
   },
