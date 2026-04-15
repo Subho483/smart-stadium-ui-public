@@ -65,6 +65,12 @@ POST /api/trigger/end_match   # Ultimate route recalculation test pushing grid t
 * **Algorithms:** Dijkstra's Shortest Path, Quadratic Density functions, Temporal Math Oscillations.
 * **Performance:** Tested simulated 100k+ load telemetry via async polling, mapping structural routing optimizations continuously.
 
+## 📖 Deep Dive Documentation
+For more detailed technical insights, please refer to the following:
+- [📋 **Project Requirements**](REQUIREMENTS.md): Technical and Functional specifications.
+- [📊 **Project Report**](REPORT.md): Problem analysis, AI solution, and performance metrics.
+- [🗺️ **System Flowcharts**](FLOWCHART.md): Architectural diagrams and decision logic.
+
 ---
 
 ### Run it Locally
