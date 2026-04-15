@@ -1,0 +1,19 @@
+name: smart-stadium-engine
+services:
+  - name: engine
+    instance_types:
+      - nano
+    regions:
+      - fra
+    docker:
+      command: npm start
+    ports:
+      - port: 10000
+        protocol: http
+    health_checks:
+      - graceful_period: 30
+        interval: 10
+        method: get
+        path: /healthz
+        port: 10000
+        timeout: 5

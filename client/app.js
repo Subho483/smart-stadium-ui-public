@@ -90,7 +90,7 @@ const SimEngine = {
 
     async triggerSurge(eventCode) {
         try {
-            await fetch(`http://localhost:4000/api/trigger/${eventCode}`, { method: 'POST' });
+            await fetch(`/api/trigger/${eventCode}`, { method: 'POST' });
             this.tick();
         } catch(e) {
             console.error("Backend unreachable for surge");
