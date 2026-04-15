@@ -16,8 +16,9 @@ COPY . .
 # Compile TypeScript
 RUN npm run build
 
-# Expose port
-EXPOSE 4000
+# Render injects PORT at runtime — do not hardcode
+# EXPOSE is informational only; the app reads process.env.PORT
+EXPOSE 10000
 
 # Execute the native Node bootstrap script
 CMD [ "npm", "start" ]
