@@ -25,8 +25,15 @@ app.use(express.json());
 app.use(limiter);
 
 // Serve static frontend
-app.use(express.static(path.join(__dirname, '../client')));
-app.use('/shared', express.static(path.join(__dirname, '../shared')));
+// When compiled, __dirname = dist/server, so go two levels up to reach project root
+const projectRoot = path.join(__dirname, '../../');
+app.use(express.static(path.join(projectRoot, 'client')));
+app.use('/shared', express.static(path.join(projectRoot, 'shared')));
+
+// ---------- HEALTH CHECK (for Render) ----------
+app.get('/healthz', (_req, res) => {
+    res.status(200).json({ status: 'healthy', uptime: process.uptime() });
+});
 
 // ---------- API ROUTES ----------
 
@@ -78,6 +85,6 @@ setInterval(() => {
     io.emit('stadium-tick', engine.state);
 }, 100);
 
-httpServer.listen(PORT, () => {
+httpServer.listen(Number(PORT), '0.0.0.0', () => {
     console.log(`🚀 Smart Venue Node System Active on port ${PORT}`);
 });
